@@ -65,8 +65,8 @@
   import { StatusEnum } from '/@/enums/investment';
   import { InvestmentManagementAPI } from '/@/api/demo/investment';
   import { investmentModel } from '/@/api/demo/model/investmentModel';
+  import { donwloadFileFn } from '/@/utils/downLoad/downloadFile';
   // import FileSaver from 'file-saver'; // 保存文件
-  import * as XLSX from 'xlsx'; // 处理json数据转excel的工具库 sheetjs
   const investmentManagementList = ref<investmentModel[]>([]);
 
   const getInvestmentManagement = async () => {
@@ -82,28 +82,7 @@
   };
 
   const donwload = async () => {
-    const res = await InvestmentManagementAPI();
-
-    // 将 JSON 数据转换为工作表
-    const worksheet = XLSX.utils.json_to_sheet(res);
-    // 创建一个工作簿
-    const workbook = XLSX.utils.book_new();
-
-    // 将工作表添加到工作簿中
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-    // 将工作簿导出为文件
-    // const excelBuffer = XLSX.write(workbook, {
-    //   bookType: 'xlsx',
-    //   type: 'array',
-    // });
-    // 创建 Blob 对象
-    // const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-
-    // 使用 FileSaver 下载文件
-    // FileSaver.saveAs(blob, 'test.xlsx');
-    // 下载文件
-    XLSX.writeFile(workbook, 'test.xlsx');
+    donwloadFileFn(investmentManagementList.value, '招商管理');
   };
 
   const statusMap = {

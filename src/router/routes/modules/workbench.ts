@@ -12,7 +12,7 @@ const workbench: AppRouteModule = {
     hideChildrenInMenu: true,
     icon: 'icon-park-outline:workbench',
     title: t('routes.workbench.workbench'),
-    orderNo: 12,
+    orderNo: 13,
   },
   children: [
     {

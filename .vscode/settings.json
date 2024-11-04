@@ -96,7 +96,7 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "never"
     },
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "i18n-ally.localesPaths": ["src/locales/lang"],
   "i18n-ally.keystyle": "nested",
