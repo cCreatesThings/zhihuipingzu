@@ -2,12 +2,14 @@ import { defHttp } from '/@/utils/http/axios';
 import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userModel';
 
 import { ErrorMessageMode } from '/#/axios';
+import { WorkbenchInfoType } from '/#/investment';
 
 enum Api {
   Login = '/login',
   Logout = '/logout',
   GetUserInfo = '/getUserInfo',
   GetPermCode = '/getPermCode',
+  GetWorkbenchInfo = '/workbenchInfo',
 }
 
 /**
@@ -38,4 +40,10 @@ export function getPermCode() {
 
 export function doLogout() {
   return defHttp.get({ url: Api.Logout });
+}
+/**
+ * @description: 获取工作台信息
+ */
+export function getWorkbenchInfoAPI() {
+  return defHttp.get<WorkbenchInfoType>({ url: Api.GetWorkbenchInfo });
 }

@@ -89,10 +89,11 @@ const transform: AxiosTransform = {
 
     if (joinPrefix) {
       config.url = `${urlPrefix}${config.url}`;
+      console.log('config.url', config.url);
     }
-
-    if (apiUrl && isString(apiUrl)) {
+    if (apiUrl && isString(apiUrl) && config.url !== '/investmentManagement') {
       config.url = `${apiUrl}${config.url}`;
+      console.log('config.url', config.url);
     }
     const params = config.params || {};
     const data = config.data || false;
