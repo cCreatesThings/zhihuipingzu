@@ -2,7 +2,7 @@ import { defHttp } from '/@/utils/http/axios';
 import { investmentModel } from '/@/api/demo/model/investmentModel';
 
 enum Api {
-  INVE_MANAGEMENT = '/investmentManagement',
+  INVE_MANAGEMENT = '/investment/management',
 }
 
 export const InvestmentManagementAPI = () =>
