@@ -41,7 +41,12 @@
     </header>
 
     <!-- Main Content -->
-    <component :is="activeDropdownCom" :title="activeDropdownMenu" />
+    <component
+      :is="activeDropdownCom"
+      :title="activeDropdownMenu"
+      :columns="columns"
+      :dataSource="dataSource"
+    />
   </div>
 </template>
 
@@ -49,6 +54,7 @@
   import { ref, shallowRef } from 'vue';
   import { DownOutlined } from '@ant-design/icons-vue';
   import PerformanceLedgerRoyaltyDetails from './components/PerformanceLedger/RoyaltyDetails.vue';
+  import { PerformanceAPI } from '/@/api/demo/preformance';
 
   const activeDropdownMenu = ref('租赁提成明细');
   const activeDropdownCom = shallowRef(PerformanceLedgerRoyaltyDetails);
@@ -70,6 +76,13 @@
   const handleDropdownMenuClick = (value) => {
     activeDropdownMenu.value = value;
   };
+
+  const dataSource = ref([]);
+  const getPerformanceRoyaltyDetails = async () => {
+    const res = await PerformanceAPI();
+    dataSource.value = res;
+  };
+  getPerformanceRoyaltyDetails();
 </script>
 
 <style lang="scss">

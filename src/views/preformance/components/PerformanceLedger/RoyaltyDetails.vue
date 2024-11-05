@@ -1,15 +1,15 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { columns } from '../../data';
-  import { PerformanceAPI } from '/@/api/demo/preformance';
-  import { PerformanceRoyaltyDetailsType } from '/#/performance';
+  import { columnsDetail, columnsTotal } from '../../data';
+  import { PerformanceAPI, PerformanceTotalAPI } from '/@/api/demo/preformance';
+  // import { PerformanceRoyaltyDetailsType } from '/#/performance';
   import { VerticalAlignBottomOutlined } from '@ant-design/icons-vue';
   import { donwloadFileFn } from '/@/utils/downLoad/downloadFile';
   // import moment from 'moment';
-  defineProps<{
+  const props = defineProps<{
     title: string;
   }>();
-  const dataSource = ref<PerformanceRoyaltyDetailsType[]>([]);
+  const dataSource = ref<any[]>([]);
 
   const filters = ref({
     project: '不限',
@@ -53,18 +53,39 @@
   };
   getPerformanceRoyaltyDetails();
 
+  // 监听 title 变化 重新渲染数据
+  watch(
+    () => props.title,
+    (newVal) => {
+      if (newVal === '租赁提成明细') {
+        getPerformanceRoyaltyDetails();
+      } else if (newVal === '租赁提成汇总') {
+        getPerformanceTotal();
+      }
+    },
+  );
+  const getPerformanceTotal = async () => {
+    const res = await PerformanceTotalAPI();
+    dataSource.value = res;
+  };
+
   // 点击下载
   const handleDownload = () => {
-    donwloadFileFn(dataSource.value, '招商信息明细');
+    donwloadFileFn(dataSource.value, '业绩台账');
   };
 
   // 搜索 监听变化
-
   watch(
     () => filters.value.search,
-    () => {
+    (val) => {
+      filters.value.search = val;
+      // 如果为 ''  重新渲染所有数据
+      if (!val) {
+        props.title === '租赁提成明细' && getPerformanceRoyaltyDetails();
+        props.title === '租赁提成汇总' && getPerformanceTotal();
+      }
       // 调用过滤函数
-      filterDataKeywords();
+      else filterDataKeywords();
     },
   );
   // 关键字过滤
@@ -77,7 +98,6 @@
       }
       return false;
     });
-    console.log(dataSource.value);
   };
 
   watch(
@@ -88,7 +108,6 @@
   );
   // 时间范围过滤
   const filterDataTimeRange = (val) => {
-    console.log(val);
     const startTime = +new Date(val[0]);
     const endTime = +new Date(val[1]);
     dataSource.value = dataSource.value.filter((item) => {
@@ -118,6 +137,7 @@
             </a-select>
             <span class="text-sm text-[#1F2329]">查询:</span>
             <a-range-picker
+              v-if="title != '租赁提成汇总'"
               v-model:value="filters.dateRange"
               class="custom-date-picker w-[200px]"
             />
@@ -139,9 +159,10 @@
 
       <!-- Table -->
       <a-table
+        v-if="title === '租赁提成明细'"
         rowKey="id"
         :scroll="{ x: 2800, y: 500 }"
-        :columns="columns"
+        :columns="columnsDetail"
         :data-source="dataSource"
         :pagination="pagination"
         bordered
@@ -150,6 +171,22 @@
           <a class="text-blue-600 hover:text-blue-800">发放提成</a>
         </template>
       </a-table>
+      <a-table
+        :scroll="{ x: 2800, y: 500 }"
+        v-else-if="title === '租赁提成汇总'"
+        rowKey="id"
+        :columns="columnsTotal"
+        :data-source="dataSource"
+        :pagination="pagination"
+        bordered
+        :row-class-name="(_record, index) => (index % 2 === 0 ? 'bg-white' : 'bg-gray-50')"
+        class="custom-table"
+      >
+        <template #id="{ record }">
+          <a-tag color="green">{{ record.id }}</a-tag>
+        </template>
+      </a-table>
+      <a-table v-else>提成发放记录</a-table>
     </div>
   </main>
 </template>

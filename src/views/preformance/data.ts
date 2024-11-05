@@ -1,4 +1,5 @@
-export const columns = [
+/** 租赁提成明细 */
+export const columnsDetail = [
   { title: '序号', dataIndex: 'id', width: 60 },
   { title: '企业名称', dataIndex: 'enterpriseName' },
   { title: '租赁提成标准', dataIndex: 'rentIntent' },
@@ -21,5 +22,161 @@ export const columns = [
     dataIndex: 'action',
     fixed: 'right',
     slots: { customRender: 'action' },
+  },
+];
+
+/** 租赁提成汇总 */
+export const columnsTotal = [
+  {
+    title: '序号',
+    dataIndex: 'id',
+    width: 60,
+    slots: { customRender: 'id' },
+  },
+  {
+    title: '分销人员',
+    dataIndex: 'employee',
+    width: 150,
+  },
+  {
+    title: '分销编号',
+    dataIndex: 'employeeId',
+    width: 120,
+  },
+  {
+    title: '房源',
+    dataIndex: 'property',
+    width: 120,
+  },
+  {
+    title: '行业内/商业',
+    children: [
+      {
+        title: '3年以上（首月租金）',
+        dataIndex: 'industry_above_3_amount',
+        width: 150,
+      },
+      {
+        title: '提成比例',
+        dataIndex: 'industry_above_3_percentage',
+        width: 100,
+      },
+      {
+        title: '3年以内（首月租金）',
+        dataIndex: 'industry_below_3_amount',
+        width: 150,
+      },
+      {
+        title: '提成比例',
+        dataIndex: 'industry_below_3_percentage',
+        width: 100,
+      },
+    ],
+  },
+  {
+    title: '行业外',
+    children: [
+      {
+        title: '签约面积',
+        dataIndex: 'external_area',
+        width: 100,
+      },
+      {
+        title: '提成比例',
+        dataIndex: 'external_percentage',
+        width: 100,
+      },
+    ],
+  },
+  {
+    title: '提成目标完成时间',
+    dataIndex: 'completion_date',
+    width: 150,
+  },
+  {
+    title: '租金总租金',
+    dataIndex: 'total_rent',
+    width: 120,
+  },
+  {
+    title: '托管总额',
+    dataIndex: 'trust_amount',
+    width: 120,
+  },
+  {
+    title: '此次发放总额',
+    dataIndex: 'current_payment',
+    width: 120,
+  },
+];
+
+export const dataSourceTotal = [
+  {
+    key: '1',
+    id: 1,
+    employee: '黄晓强-13111112222',
+    employeeId: '招商专员',
+    property: 'xxx项目1401',
+    industry_above_3_amount: '15000',
+    industry_above_3_percentage: '100',
+    industry_below_3_amount: '',
+    industry_below_3_percentage: '',
+    external_area: '',
+    external_percentage: '',
+    completionDate: '2023-03-01',
+    totalRent: '15000',
+    trustAmount: '2000',
+    currentPayment: '7500',
+  },
+  {
+    key: '2',
+    id: 2,
+    employee: '黄青青-13111112222',
+    employeeId: '招商主管',
+    property: 'xxx项目1402',
+    industry_above_3_amount: '',
+    industry_above_3_percentage: '',
+    industry_below_3_amount: '10000',
+    industry_below_3_percentage: '50',
+    external_area: '',
+    external_percentage: '',
+    completionDate: '2023-03-01',
+    totalRent: '10000',
+    trustAmount: '2000',
+    currentPayment: '10000',
+  },
+  {
+    key: '3',
+    id: 3,
+    employee: '黄青青-13111112222',
+    employeeId: '招商主管',
+    property: 'xxx项目1403',
+    industry_above_3_amount: '10000',
+    industry_above_3_percentage: '100',
+    industry_below_3_amount: '',
+    industry_below_3_percentage: '',
+    external_area: '',
+    external_percentage: '',
+    completionDate: '2023-03-01',
+    totalRent: '10000',
+    trustAmount: '',
+    currentPayment: '5000',
+  },
+  {
+    key: '4',
+    id: 4,
+    employee: '黄望望-13111112222',
+    employeeId: '招商经理',
+    property: 'xxx项目1404',
+    industry_above_3_amount: '',
+    industry_above_3_percentage: '',
+    industry_below_3_amount: '',
+    industry_below_3_percentage: '',
+    external_area: '10000',
+    external_percentage: '0.5',
+    completionDate: '2023-03-01',
+    totalRent: '5000',
+    trustAmount: '0',
+    currentPayment: '5000',
   },
 ];

@@ -53,3 +53,31 @@ export interface PerformanceRoyaltyDetailsType {
   /** 操作说明，如“发起追回” */
   action: string;
 }
+
+interface PreformanceTotalType {
+  id: number;
+  /**分佣人员 */
+  employee: string;
+  /** 分销编号 */
+  employeeId: string;
+  /** 房源 */
+  property: string;
+  /** 3年以上（首月租金）  */
+  industry_above_3_amount: number;
+  /**  3年以上提成比例 */
+  industry_above_3_percentage: string;
+  /** 3年以内（首月租金） */
+  industry_below_3_amount: number;
+  /** 签约面积 */
+  external_area: number;
+  /**提成比例（行业外） */
+  external_percentage: string;
+  /** 提成目标完成时间 */
+  completion_date: string; // 假设日期格式为 'YYYY-MM-DD'
+  /** 租频总租金 */
+  total_rent: number;
+  /** 扣除总额 */
+  trust_amount: number;
+  /** 此次发放总额 */
+  current_payment: number;
+}
