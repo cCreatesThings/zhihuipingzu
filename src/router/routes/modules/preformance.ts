@@ -7,7 +7,7 @@ const preformance: AppRouteModule = {
   path: '/preformance',
   name: 'Preformance',
   component: LAYOUT,
-  // redirect: '/preformance/royaltyDetails',
+  redirect: '/preformance/performanceLedger',
   meta: {
     hideChildrenInMenu: false,
     icon: 'material-symbols:work-history-sharp',
@@ -23,7 +23,6 @@ const preformance: AppRouteModule = {
         title: t('业绩台账'),
         icon: 'icon-park-twotone:view-grid-detail',
         hideMenu: false,
-        // hideChildrenInMenu: true,
       },
     },
   ],

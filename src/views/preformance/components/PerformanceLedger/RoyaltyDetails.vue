@@ -1,11 +1,14 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { columns } from '../../data';
   import { PerformanceAPI } from '/@/api/demo/preformance';
   import { PerformanceRoyaltyDetailsType } from '/#/performance';
   import { VerticalAlignBottomOutlined } from '@ant-design/icons-vue';
   import { donwloadFileFn } from '/@/utils/downLoad/downloadFile';
-
+  // import moment from 'moment';
+  defineProps<{
+    title: string;
+  }>();
   const dataSource = ref<PerformanceRoyaltyDetailsType[]>([]);
 
   const filters = ref({
@@ -50,8 +53,48 @@
   };
   getPerformanceRoyaltyDetails();
 
+  // 点击下载
   const handleDownload = () => {
     donwloadFileFn(dataSource.value, '招商信息明细');
+  };
+
+  // 搜索 监听变化
+
+  watch(
+    () => filters.value.search,
+    () => {
+      // 调用过滤函数
+      filterDataKeywords();
+    },
+  );
+  // 关键字过滤
+  const filterDataKeywords = () => {
+    dataSource.value = dataSource.value.filter((item) => {
+      const itemStr = Object.values(item).join('').toLowerCase();
+      const searchStr = filters.value.search.toLowerCase().trim();
+      if (itemStr.includes(searchStr)) {
+        return true;
+      }
+      return false;
+    });
+    console.log(dataSource.value);
+  };
+
+  watch(
+    () => filters.value.dateRange,
+    (newVal) => {
+      filterDataTimeRange(newVal);
+    },
+  );
+  // 时间范围过滤
+  const filterDataTimeRange = (val) => {
+    console.log(val);
+    const startTime = +new Date(val[0]);
+    const endTime = +new Date(val[1]);
+    dataSource.value = dataSource.value.filter((item) => {
+      const contractPeriod = item.contractPeriod.split('~');
+      return +new Date(contractPeriod[0]) >= startTime && +new Date(contractPeriod[1]) <= endTime;
+    });
   };
 </script>
 
@@ -59,27 +102,32 @@
   <main class="p-4">
     <div class="bg-white rounded-lg shadow">
       <!-- Filter Section -->
+      <span class="text-sm title text-[#1F2329] m-4">{{ title }}</span>
       <div class="p-4 border-b border-[#E5E6EB]">
         <div class="flex items-center justify-between space-x-4">
-          <span class="text-sm text-[#1F2329]">招商信息明细</span>
-          <a-select
-            v-model:value="filters.project"
-            placeholder="选择项目"
-            style="width: 200px"
-            class="custom-select"
-          >
-            <a-select-option v-for="item in selectList" :value="item.value" :key="item.value">{{
-              item.label
-            }}</a-select-option>
-          </a-select>
-          <span class="text-sm text-[#1F2329]">查询:</span>
-          <a-range-picker v-model:value="filters.dateRange" class="custom-date-picker" />
-          <a-input-search
-            v-model:value="filters.search"
-            placeholder="搜索内容"
-            style="width: 300px"
-            class="custom-search"
-          />
+          <div class="flex items-center w-[80%] space-x-4">
+            <a-select
+              v-model:value="filters.project"
+              placeholder="选择项目"
+              style="width: 200px"
+              class="custom-select"
+            >
+              <a-select-option v-for="item in selectList" :value="item.value" :key="item.value">{{
+                item.label
+              }}</a-select-option>
+            </a-select>
+            <span class="text-sm text-[#1F2329]">查询:</span>
+            <a-range-picker
+              v-model:value="filters.dateRange"
+              class="custom-date-picker w-[200px]"
+            />
+            <a-input-search
+              v-model:value="filters.search"
+              placeholder="搜索内容"
+              style="width: 300px"
+              class="custom-search"
+            />
+          </div>
           <a-popconfirm title="确定下载吗？" @confirm="handleDownload">
             <a-button type="primary">
               下载
@@ -107,5 +155,11 @@
 </template>
 
 <style scoped>
-  /* Your styles here */
+  .title {
+    font-weight: bold;
+    margin-top: 10px;
+    padding-left: 8px;
+    border-left: 2px solid #60a0ff;
+    border-radius: 2px;
+  }
 </style>

@@ -19,7 +19,7 @@
         <div class="flex items-center space-x-4">
           <a-dropdown>
             <a class="text-[#4E5969] hover:text-blue-600 text-sm">
-              {{ activeDropdownMenu }}
+              业绩台账
               <down-outlined />
             </a>
             <template #overlay>
@@ -34,24 +34,24 @@
               </a-menu>
             </template>
           </a-dropdown>
-          <div>分佣配置</div>
+          <div class="cursor-pointer">分佣配置</div>
         </div>
         <a-avatar size="small" src="https://i.postimg.cc/L4CKpVB7/image.png" />
       </div>
     </header>
 
     <!-- Main Content -->
-    <component :is="PerformanceLedgerRoyaltyDetails" />
+    <component :is="activeDropdownCom" :title="activeDropdownMenu" />
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { ref, shallowRef } from 'vue';
   import { DownOutlined } from '@ant-design/icons-vue';
   import PerformanceLedgerRoyaltyDetails from './components/PerformanceLedger/RoyaltyDetails.vue';
 
   const activeDropdownMenu = ref('租赁提成明细');
-
+  const activeDropdownCom = shallowRef(PerformanceLedgerRoyaltyDetails);
   const dropdownMenuList = [
     {
       label: '租赁提成明细',
