@@ -16,6 +16,7 @@ import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '/@/store/modules/user';
+import { message } from 'ant-design-vue';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -142,7 +143,13 @@ const transform: AxiosTransform = {
    * @description: 请求拦截器处理
    */
   requestInterceptors: (config, options) => {
+    // 开启loading
+    message.loading({
+      content: '加载中...',
+      maxCount: 1,
+    });
     // 请求之前处理config
+
     const token = getToken();
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       // jwt token
@@ -157,6 +164,7 @@ const transform: AxiosTransform = {
    * @description: 响应拦截器处理
    */
   responseInterceptors: (res: AxiosResponse<any>) => {
+    message.destroy();
     return res;
   },
 

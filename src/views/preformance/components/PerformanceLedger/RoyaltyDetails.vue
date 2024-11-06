@@ -1,11 +1,13 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
-  import { columnsDetail, columnsTotal } from '../../data';
-  import { PerformanceAPI, PerformanceTotalAPI } from '/@/api/demo/preformance';
-  // import { PerformanceRoyaltyDetailsType } from '/#/performance';
+  import { columnsDetail, columnsTotal, columnsRecord, columnsPerson } from '../../data';
+  import {
+    PerformanceAPI,
+    PerformanceRecordAPI,
+    PerformanceTotalAPI,
+  } from '/@/api/demo/preformance';
   import { VerticalAlignBottomOutlined } from '@ant-design/icons-vue';
   import { donwloadFileFn } from '/@/utils/downLoad/downloadFile';
-  // import moment from 'moment';
   const props = defineProps<{
     title: string;
   }>();
@@ -51,6 +53,11 @@
     const res = await PerformanceAPI();
     dataSource.value = res;
   };
+
+  const getPerformanceRecord = async (type: 1 | 2) => {
+    const res = await PerformanceRecordAPI(type);
+    dataSource.value = res;
+  };
   getPerformanceRoyaltyDetails();
 
   // 监听 title 变化 重新渲染数据
@@ -61,6 +68,8 @@
         getPerformanceRoyaltyDetails();
       } else if (newVal === '租赁提成汇总') {
         getPerformanceTotal();
+      } else {
+        getPerformanceRecord(performanceRecordSelectVal.value);
       }
     },
   );
@@ -80,9 +89,11 @@
     (val) => {
       filters.value.search = val;
       // 如果为 ''  重新渲染所有数据
+
       if (!val) {
         props.title === '租赁提成明细' && getPerformanceRoyaltyDetails();
         props.title === '租赁提成汇总' && getPerformanceTotal();
+        props.title === '提成发放记录' && getPerformanceRecord(performanceRecordSelectVal.value);
       }
       // 调用过滤函数
       else filterDataKeywords();
@@ -108,6 +119,10 @@
   );
   // 时间范围过滤
   const filterDataTimeRange = (val) => {
+    if (Object.keys(val).length === 0) {
+      getPerformanceRoyaltyDetails();
+      return;
+    }
     const startTime = +new Date(val[0]);
     const endTime = +new Date(val[1]);
     dataSource.value = dataSource.value.filter((item) => {
@@ -115,32 +130,59 @@
       return +new Date(contractPeriod[0]) >= startTime && +new Date(contractPeriod[1]) <= endTime;
     });
   };
+
+  // performanceRecord 按房源 按分佣人员
+  const performanceRecordSelectList = [
+    {
+      label: '按房源',
+      value: 1,
+    },
+    {
+      label: '按分佣人员',
+      value: 2,
+    },
+  ];
+  // 选中的值
+  const performanceRecordSelectVal = ref<1 | 2>(1);
+  watch(
+    () => performanceRecordSelectVal.value,
+    (val) => {
+      getPerformanceRecord(val);
+    },
+  );
 </script>
 
 <template>
   <main class="p-4">
-    <div class="bg-white rounded-lg shadow">
+    <div class="rounded-lg shadow">
       <!-- Filter Section -->
-      <span class="text-sm title text-[#1F2329] m-4">{{ title }}</span>
+      <span class="text-sm title m-4">{{ title }}</span>
       <div class="p-4 border-b border-[#E5E6EB]">
         <div class="flex items-center justify-between space-x-4">
           <div class="flex items-center w-[80%] space-x-4">
-            <a-select
-              v-model:value="filters.project"
-              placeholder="选择项目"
-              style="width: 200px"
-              class="custom-select"
-            >
+            <a-select v-model:value="filters.project" style="width: 200px" class="custom-select">
               <a-select-option v-for="item in selectList" :value="item.value" :key="item.value">{{
                 item.label
               }}</a-select-option>
             </a-select>
-            <span class="text-sm text-[#1F2329]">查询:</span>
-            <a-range-picker
-              v-if="title != '租赁提成汇总'"
-              v-model:value="filters.dateRange"
-              class="custom-date-picker w-[200px]"
-            />
+            <div class="w-[250px]" v-if="title === '租赁提成明细'">
+              <span class="text-sm">查询:</span>
+              <a-range-picker
+                v-model:value="filters.dateRange"
+                class="custom-date-picker w-[200px]"
+            /></div>
+            <div v-if="title === '提成发放记录'" class="flex w-[251px] item-center justify-center">
+              <div class="font-bold text-center leading-7"> 查看维度: </div>
+              <a-select v-model:value="performanceRecordSelectVal" style="width: 150px">
+                <a-select-option
+                  v-for="item in performanceRecordSelectList"
+                  :value="item.value"
+                  :key="item.value"
+                  >{{ item.label }}</a-select-option
+                >
+              </a-select>
+            </div>
+
             <a-input-search
               v-model:value="filters.search"
               placeholder="搜索内容"
@@ -158,35 +200,63 @@
       </div>
 
       <!-- Table -->
-      <a-table
-        v-if="title === '租赁提成明细'"
-        rowKey="id"
-        :scroll="{ x: 2800, y: 500 }"
-        :columns="columnsDetail"
-        :data-source="dataSource"
-        :pagination="pagination"
-        bordered
-      >
-        <template #action>
-          <a class="text-blue-600 hover:text-blue-800">发放提成</a>
+      <template v-if="dataSource.length">
+        <a-table
+          v-if="title === '租赁提成明细'"
+          rowKey="id"
+          :scroll="{ x: 2800, y: 500 }"
+          :columns="columnsDetail"
+          :data-source="dataSource"
+          :pagination="pagination"
+          bordered
+        >
+          <template #action>
+            <a class="text-blue-600 hover:text-blue-800">发放提成</a>
+          </template>
+        </a-table>
+        <a-table
+          :scroll="{ x: 2800, y: 500 }"
+          v-else-if="title === '租赁提成汇总'"
+          rowKey="id"
+          :columns="columnsTotal"
+          :data-source="dataSource"
+          :pagination="pagination"
+          bordered
+        >
+          <template #id="{ record }">
+            <a-tag color="green">{{ record.id }}</a-tag>
+          </template>
+        </a-table>
+        <template v-else>
+          <a-table
+            v-if="performanceRecordSelectVal === 1"
+            :pagination="pagination"
+            :dataSource="dataSource"
+            :columns="columnsRecord"
+            rowKey="id"
+            :scroll="{ x: 1600, y: 500 }"
+          >
+            <template #roomInfo="{ record }">
+              <a-tag color="green">{{ record.roomInfo?.slice(0, 4) }}</a-tag
+              >{{ record.roomInfo?.slice(4) }}
+            </template>
+          </a-table>
+          <a-table
+            v-else
+            rowKey="id"
+            :pagination="pagination"
+            :dataSource="dataSource"
+            :columns="columnsPerson"
+            :scroll="{ x: 2000, y: 500 }"
+          >
+            <template #roomInfo="{ record }">
+              <a-tag color="green">{{ record.roomInfo?.slice(0, 4) }}</a-tag
+              >{{ record.roomInfo?.slice(4) }}
+            </template>
+          </a-table>
         </template>
-      </a-table>
-      <a-table
-        :scroll="{ x: 2800, y: 500 }"
-        v-else-if="title === '租赁提成汇总'"
-        rowKey="id"
-        :columns="columnsTotal"
-        :data-source="dataSource"
-        :pagination="pagination"
-        bordered
-        :row-class-name="(_record, index) => (index % 2 === 0 ? 'bg-white' : 'bg-gray-50')"
-        class="custom-table"
-      >
-        <template #id="{ record }">
-          <a-tag color="green">{{ record.id }}</a-tag>
-        </template>
-      </a-table>
-      <a-table v-else>提成发放记录</a-table>
+      </template>
+      <template v-else> <a-spin /></template>
     </div>
   </main>
 </template>

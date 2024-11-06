@@ -81,3 +81,24 @@ interface PreformanceTotalType {
   /** 此次发放总额 */
   current_payment: number;
 }
+
+export interface PreformanceRecordRoomType {
+  id: number;
+  roomInfo: string;
+  contractPeriod: string;
+  totalCommission: number;
+  distributedCommission: number;
+  lastDistributionTime: string;
+}
+
+export interface PreformanceRecordPersonType {
+  serialNumber: number;
+  commissioner: string;
+  position: string;
+  roomInfo: string;
+  contractPeriod: string;
+  commissionAmount: number;
+  overdueDeduction: number;
+  distributedAmount: number;
+  distributionTime: string;
+}
