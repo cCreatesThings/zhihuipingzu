@@ -8,6 +8,8 @@
   } from '/@/api/demo/preformance';
   import { VerticalAlignBottomOutlined } from '@ant-design/icons-vue';
   import { donwloadFileFn } from '/@/utils/downLoad/downloadFile';
+  import ReleaseRoyaltyDetails from './components/ReleaseRoyaltyDetails.vue';
+  import { PerformanceRoyaltyDetailsType } from '/#/performance';
   const props = defineProps<{
     title: string;
   }>();
@@ -150,6 +152,14 @@
       getPerformanceRecord(val);
     },
   );
+  // 传递给子组件渲染的数据
+  const ReleaseRoyaltyDetailsItem = ref<PerformanceRoyaltyDetailsType>();
+  // 控制弹窗显示的开关
+  const openReleaseRoyaltyDetails = ref(false);
+  const showReleaseRoyaltyDetails = (record: PerformanceRoyaltyDetailsType) => {
+    openReleaseRoyaltyDetails.value = true; // 显示弹窗
+    ReleaseRoyaltyDetailsItem.value = record; // 传递数据
+  };
 </script>
 
 <template>
@@ -210,8 +220,10 @@
           :pagination="pagination"
           bordered
         >
-          <template #action>
-            <a class="text-blue-600 hover:text-blue-800">发放提成</a>
+          <template #action="{ record }">
+            <a class="text-blue-600 hover:text-blue-800" @click="showReleaseRoyaltyDetails(record)"
+              >发放提成</a
+            >
           </template>
         </a-table>
         <a-table
@@ -258,6 +270,14 @@
       </template>
       <template v-else> <a-spin /></template>
     </div>
+    <a-modal
+      :width="700"
+      v-model:visible="openReleaseRoyaltyDetails"
+      aria-hidden="true"
+      title="房间业绩提成详情"
+    >
+      <ReleaseRoyaltyDetails :record="ReleaseRoyaltyDetailsItem!" />
+    </a-modal>
   </main>
 </template>
 

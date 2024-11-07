@@ -49,9 +49,6 @@ export interface PerformanceRoyaltyDetailsType {
 
   /** 已发放提成金额，单位为元 */
   amountRecovered: string;
-
-  /** 操作说明，如“发起追回” */
-  action: string;
 }
 
 interface PreformanceTotalType {
