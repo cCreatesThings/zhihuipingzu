@@ -158,12 +158,22 @@
   const openReleaseRoyaltyDetails = ref(false);
   const showReleaseRoyaltyDetails = (record: PerformanceRoyaltyDetailsType) => {
     openReleaseRoyaltyDetails.value = true; // 显示弹窗
+    isHide.value = false; // 打印按钮显示
     ReleaseRoyaltyDetailsItem.value = record; // 传递数据
+  };
+
+  // 打印弹出层
+  const isHide = ref(false);
+  const handleOk = () => {
+    isHide.value = true; // 打印按钮隐藏
+    setTimeout(() => {
+      window.print();
+    }, 300);
   };
 </script>
 
 <template>
-  <main class="p-4">
+  <main class="p-4 main-content">
     <div class="rounded-lg shadow">
       <!-- Filter Section -->
       <span class="text-sm title m-4">{{ title }}</span>
@@ -271,22 +281,39 @@
       <template v-else> <a-spin /></template>
     </div>
     <a-modal
+      class="print"
       :width="700"
       v-model:visible="openReleaseRoyaltyDetails"
       aria-hidden="true"
       title="房间业绩提成详情"
     >
       <ReleaseRoyaltyDetails :record="ReleaseRoyaltyDetailsItem!" />
+      <template #footer>
+        <a-button :class="{ hide: isHide }" key="submit" type="primary" @click="handleOk"
+          >打印</a-button
+        >
+      </template>
     </a-modal>
   </main>
 </template>
 
 <style scoped>
+  .hide {
+    display: none;
+  }
   .title {
     font-weight: bold;
     margin-top: 10px;
     padding-left: 8px;
     border-left: 2px solid #60a0ff;
     border-radius: 2px;
+  }
+  @media print {
+    .main-content {
+      visibility: hidden;
+    }
+    .print {
+      visibility: visible;
+    }
   }
 </style>

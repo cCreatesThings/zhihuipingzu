@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { DownOutlined, UpOutlined } from '@ant-design/icons-vue';
+  import { DownOutlined } from '@ant-design/icons-vue';
   import { PerformanceRoyaltyDetailsType } from '/#/performance';
   import { ref } from 'vue';
 
@@ -8,7 +8,7 @@
   }>();
 
   // 切换显示提成发放记录的展开和收起
-  const toggleShowRoyaltyRelease = ref(false);
+  const toggleShowRoyaltyRelease = ref(true);
   const toggleShowRoyaltyReleaseHandle = () => {
     toggleShowRoyaltyRelease.value = !toggleShowRoyaltyRelease.value;
   };
@@ -68,8 +68,11 @@
       >
       <div class="mt-[10px]">
         <div class="text-[15px] cursor-pointer flex" @click="toggleShowRoyaltyReleaseHandle">
-          <DownOutlined v-if="toggleShowRoyaltyRelease" />
-          <UpOutlined v-else />
+          <DownOutlined
+            class="rotate-transition"
+            :class="{ 'rotate-180': toggleShowRoyaltyRelease }"
+          />
+          <!-- <UpOutlined v-else /> -->
           <div class="flex ml-[10px]">
             <Icon icon="line-md:file-filled" /> <span>提成发放记录</span>
           </div>
@@ -111,5 +114,11 @@
   }
   .hide {
     height: 0;
+  }
+  .rotate-transition {
+    transition: all 0.5s;
+  }
+  .rotate-180 {
+    transform: rotate(-180deg);
   }
 </style>
