@@ -11,7 +11,7 @@
   import ReleaseRoyaltyDetails from './components/ReleaseRoyaltyDetails.vue';
   import { PerformanceRoyaltyDetailsType } from '/#/performance';
   const props = defineProps<{
-    title: string;
+    royaltyTitle: string;
   }>();
   const dataSource = ref<any[]>([]);
 
@@ -20,6 +20,8 @@
     dateRange: [],
     search: '',
   });
+
+  // 分页配置
   const pagination = {
     total: dataSource.value.length,
     pageSize: 5,
@@ -28,6 +30,9 @@
     showQuickJumper: true,
     pageSizeOptions: ['5', '10', '15', '20', '25'],
   };
+
+  // 选中的值    performanceRecord 按房源 按分佣人员
+  const performanceRecordSelectVal = ref<1 | 2>(1);
 
   const selectList = [
     {
@@ -60,11 +65,15 @@
     const res = await PerformanceRecordAPI(type);
     dataSource.value = res;
   };
-  getPerformanceRoyaltyDetails();
+  // getPerformanceRoyaltyDetails();
+  const getPerformanceTotal = async () => {
+    const res = await PerformanceTotalAPI();
+    dataSource.value = res;
+  };
 
   // 监听 title 变化 重新渲染数据
   watch(
-    () => props.title,
+    () => props.royaltyTitle,
     (newVal) => {
       if (newVal === '租赁提成明细') {
         getPerformanceRoyaltyDetails();
@@ -74,11 +83,10 @@
         getPerformanceRecord(performanceRecordSelectVal.value);
       }
     },
+    {
+      immediate: true,
+    },
   );
-  const getPerformanceTotal = async () => {
-    const res = await PerformanceTotalAPI();
-    dataSource.value = res;
-  };
 
   // 点击下载
   const handleDownload = () => {
@@ -93,9 +101,10 @@
       // 如果为 ''  重新渲染所有数据
 
       if (!val) {
-        props.title === '租赁提成明细' && getPerformanceRoyaltyDetails();
-        props.title === '租赁提成汇总' && getPerformanceTotal();
-        props.title === '提成发放记录' && getPerformanceRecord(performanceRecordSelectVal.value);
+        props.royaltyTitle === '租赁提成明细' && getPerformanceRoyaltyDetails();
+        props.royaltyTitle === '租赁提成汇总' && getPerformanceTotal();
+        props.royaltyTitle === '提成发放记录' &&
+          getPerformanceRecord(performanceRecordSelectVal.value);
       }
       // 调用过滤函数
       else filterDataKeywords();
@@ -144,8 +153,7 @@
       value: 2,
     },
   ];
-  // 选中的值
-  const performanceRecordSelectVal = ref<1 | 2>(1);
+
   watch(
     () => performanceRecordSelectVal.value,
     (val) => {
@@ -176,7 +184,7 @@
   <main class="p-4 main-content">
     <div class="rounded-lg shadow">
       <!-- Filter Section -->
-      <span class="text-sm title m-4">{{ title }}</span>
+      <span class="text-sm title m-4">{{ royaltyTitle }}</span>
       <div class="p-4 border-b border-[#E5E6EB]">
         <div class="flex items-center justify-between space-x-4">
           <div class="flex items-center w-[80%] space-x-4">
@@ -185,13 +193,16 @@
                 item.label
               }}</a-select-option>
             </a-select>
-            <div class="w-[250px]" v-if="title === '租赁提成明细'">
+            <div class="w-[250px]" v-if="royaltyTitle === '租赁提成明细'">
               <span class="text-sm">查询:</span>
               <a-range-picker
                 v-model:value="filters.dateRange"
                 class="custom-date-picker w-[200px]"
             /></div>
-            <div v-if="title === '提成发放记录'" class="flex w-[251px] item-center justify-center">
+            <div
+              v-if="royaltyTitle === '提成发放记录'"
+              class="flex w-[251px] item-center justify-center"
+            >
               <div class="font-bold text-center leading-7"> 查看维度: </div>
               <a-select v-model:value="performanceRecordSelectVal" style="width: 150px">
                 <a-select-option
@@ -222,7 +233,7 @@
       <!-- Table -->
       <template v-if="dataSource.length">
         <a-table
-          v-if="title === '租赁提成明细'"
+          v-if="royaltyTitle === '租赁提成明细'"
           rowKey="id"
           :scroll="{ x: 2800, y: 500 }"
           :columns="columnsDetail"
@@ -231,14 +242,16 @@
           bordered
         >
           <template #action="{ record }">
-            <a class="text-blue-600 hover:text-blue-800" @click="showReleaseRoyaltyDetails(record)"
-              >发放提成</a
+            <a
+              class="text-blue-600 hover:text-blue-800 ml-[10px]"
+              @click="showReleaseRoyaltyDetails(record)"
+              >查看详情</a
             >
           </template>
         </a-table>
         <a-table
           :scroll="{ x: 2800, y: 500 }"
-          v-else-if="title === '租赁提成汇总'"
+          v-else-if="royaltyTitle === '租赁提成汇总'"
           rowKey="id"
           :columns="columnsTotal"
           :data-source="dataSource"

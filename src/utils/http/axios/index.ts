@@ -99,7 +99,6 @@ const transform: AxiosTransform = {
       !config.url?.includes('performance')
     ) {
       config.url = `${apiUrl}${config.url}`;
-      console.log('config.url', config.url);
     }
     const params = config.params || {};
     const data = config.data || false;

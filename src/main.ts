@@ -15,14 +15,17 @@ import { setupGlobDirectives } from '/@/directives';
 import { setupI18n } from '/@/locales/setupI18n';
 import { registerGlobComp } from '/@/components/registerGlobComp';
 import { Icon } from '@iconify/vue';
-import antdVue from 'ant-design-vue';
+import antdVue, { message } from 'ant-design-vue';
 // Importing on demand in local development will increase the number of browser requests by around 20%.
 // This may slow down the browser refresh speed.
 // Therefore, only enable on-demand importing in production environments .
 if (import.meta.env.DEV) {
   import('ant-design-vue/dist/antd.less');
 }
-
+message.config({
+  top: `100px`,
+  maxCount: 1,
+});
 async function bootstrap() {
   const app = createApp(App);
 

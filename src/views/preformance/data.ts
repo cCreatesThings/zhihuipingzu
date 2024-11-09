@@ -109,9 +109,8 @@ export const columnsTotal = [
     width: 120,
   },
 ];
-
-export // columns 字段，定义了表格的列和它们的属性
-const columnsRecord = [
+// columns 字段，定义了表格的列和它们的属性
+export const columnsRecord = [
   {
     title: '序号',
     dataIndex: 'id',
@@ -195,5 +194,40 @@ export const columnsPerson = [
     title: '发放时间',
     dataIndex: 'distributionTime',
     key: 'distributionTime',
+  },
+];
+
+/** 签约业绩提成配置表 列 */
+export const subcommissionAllocationColumns = [
+  {
+    title: '租赁提成标准',
+    dataIndex: 'standard',
+    key: 'standard',
+    align: 'center',
+  },
+  {
+    title: '行业内/行业外',
+    dataIndex: 'industry',
+    key: 'industry',
+    align: 'center',
+  },
+  {
+    title: '签约类型',
+    dataIndex: 'contractType',
+    key: 'contractType',
+    align: 'center',
+  },
+  {
+    title: '签约时长',
+    dataIndex: 'contractDuration',
+    key: 'contractDuration',
+    align: 'center',
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    key: 'action',
+    align: 'center',
+    slots: { customRender: 'action' },
   },
 ];

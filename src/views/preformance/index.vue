@@ -34,14 +34,14 @@
               </a-menu>
             </template>
           </a-dropdown>
-          <div class="cursor-pointer">分佣配置</div>
+          <div class="cursor-pointer" @click="showSubcommissionAllocation">分佣配置</div>
         </div>
         <a-avatar size="small" src="https://i.postimg.cc/L4CKpVB7/image.png" />
       </div>
     </header>
 
     <!-- Main Content -->
-    <component :is="activeDropdownCom" :title="activeDropdownMenu" />
+    <component :is="activeDropdownCom" :royaltyTitle="activeDropdownMenu" />
   </div>
 </template>
 
@@ -49,9 +49,11 @@
   import { ref, shallowRef } from 'vue';
   import { DownOutlined } from '@ant-design/icons-vue';
   import PerformanceLedgerRoyaltyDetails from './components/PerformanceLedger/RoyaltyDetails.vue';
+  import SubcommissionAllocation from './components/PerformanceLedger/SubcommissionAllocation.vue';
 
   const activeDropdownMenu = ref('租赁提成明细');
-  const activeDropdownCom = shallowRef(PerformanceLedgerRoyaltyDetails);
+  const activeDropdownCom = shallowRef(SubcommissionAllocation);
+
   const dropdownMenuList = [
     {
       label: '租赁提成明细',
@@ -68,7 +70,12 @@
   ];
 
   const handleDropdownMenuClick = (value) => {
+    activeDropdownCom.value = PerformanceLedgerRoyaltyDetails;
     activeDropdownMenu.value = value;
+  };
+
+  const showSubcommissionAllocation = () => {
+    activeDropdownCom.value = SubcommissionAllocation;
   };
 </script>
 

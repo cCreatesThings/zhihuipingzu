@@ -99,3 +99,12 @@ export interface PreformanceRecordPersonType {
   distributedAmount: number;
   distributionTime: string;
 }
+
+/** 签约业绩提成配置表 */
+export interface SubcommissionAllocationType {
+  id: number;
+  standard: string;
+  industry: string;
+  contractType: string;
+  contractDuration: string;
+}
