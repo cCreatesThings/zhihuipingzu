@@ -31,7 +31,9 @@
           :rowKey="(record:DataType) => record.id"
           :columns="columns"
         >
-          <template #action><Button type="link">delete</Button></template>
+          <template #action="{ record }">
+            <Button type="link" @click="deleteItem(record)">delete</Button>
+          </template>
           <template #status="{ record }">
             <Tag :color="record.status == 1 ? 'green' : record.status == 2 ? 'blue' : 'red'">
               {{ statusMap[record.status] }}
@@ -91,6 +93,15 @@
     [StatusEnum['关闭']]: '关闭',
   };
   console.log(statusMap);
+
+  // 点击删除当前项
+  const deleteItem = (record) => {
+    console.log(record);
+    // 删除当前项
+    investmentManagementList.value = investmentManagementList.value.filter((item: any) => {
+      return item.id !== record.id;
+    });
+  };
 </script>
 
 <style scoped>
